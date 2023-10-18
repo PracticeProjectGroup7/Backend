@@ -9,7 +9,8 @@ ADD .mvn/wrapper /hms/.mvn/wrapper
 RUN [ "./mvnw", "-B", "-ntp", "-q", "dependency:go-offline"]
 
 COPY docker_entrypoint.sh /hms/
+RUN chmod +x /hms/docker_entrypoint.sh
 
 EXPOSE 8080
 
-ENTRYPOINT ["./docker_entrypoint.sh"]
+ENTRYPOINT ["/hms/docker_entrypoint.sh"]

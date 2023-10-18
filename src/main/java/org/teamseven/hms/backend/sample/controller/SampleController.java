@@ -3,11 +3,15 @@ package org.teamseven.hms.backend.sample.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.teamseven.hms.backend.sample.entity.BloodType;
 import org.teamseven.hms.backend.sample.service.SampleService;
 import org.teamseven.hms.backend.shared.ResponseWrapper;
 import org.teamseven.hms.backend.shared.annotation.SampleAccessValidated;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/samples")
@@ -52,6 +56,22 @@ public class SampleController {
     public ResponseEntity<ResponseWrapper> getWithValidatedAccess() {
         return ResponseEntity.ok(
                 new ResponseWrapper.Success<>(sampleService.getSampleResponse())
+        );
+    }
+
+    @GetMapping("/patients/{uuid}")
+    public ResponseEntity<ResponseWrapper> getPatient(@PathVariable String uuid) {
+        return ResponseEntity.ok(
+                new ResponseWrapper.Success<>(sampleService.getSamplePatientInfo(UUID.fromString(uuid)))
+        );
+    }
+
+    @GetMapping("/patients/blood-types/{bloodType}")
+    public ResponseEntity<ResponseWrapper> getPatientsByBloodType(@PathVariable String bloodType) {
+        return ResponseEntity.ok(
+                new ResponseWrapper.Success<>(
+                        sampleService.getPatientsByBloodType(BloodType.valueOf(bloodType.toUpperCase()))
+                )
         );
     }
 }

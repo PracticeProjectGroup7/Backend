@@ -7,7 +7,7 @@ set -e
 " &
 
 while true; do
-  echo "Buildibng"
+  echo "Building"
   watch -d -t -g "ls -lR ./src | md5sum" && ./mvnw compile
   echo "Change detected"
 done
