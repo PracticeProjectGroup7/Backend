@@ -1,0 +1,1 @@
+ALTER TABLE services MODIFY doctorid binary(16);
