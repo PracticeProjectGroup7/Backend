@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.teamseven.hms.backend.admin.dto.*;
-import org.teamseven.hms.backend.booking.entity.Booking;
-import org.teamseven.hms.backend.booking.entity.BookingRepository;
 import org.teamseven.hms.backend.client.CatalogClient;
 import org.teamseven.hms.backend.client.CreateDoctorService;
 import org.teamseven.hms.backend.user.Role;
@@ -22,15 +20,11 @@ import org.teamseven.hms.backend.user.entity.*;
 import org.teamseven.hms.backend.user.service.UserService;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 @Service
 public class AdminService  {
-    @Autowired
-    private BookingRepository bookingRepository;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -54,50 +48,6 @@ public class AdminService  {
 
     @Autowired
     private UserService userService;
-
-
-    @Transactional
-    public boolean modifyBooking(ModifyBookingRequest modifyBookingRequest) {
-        Optional<Booking> existingBooking = bookingRepository
-                .findByServiceIdAndReservedDateAndSlot(
-                        modifyBookingRequest.getServiceId(),
-                        modifyBookingRequest.getNewReservedDate(),
-                        modifyBookingRequest.getNewSlot()
-                );
-        if(existingBooking.isPresent()) {
-            throw new IllegalStateException("Unable to modify booking, booking already exists!");
-        }
-
-        return bookingRepository
-                .updateBooking(
-                        modifyBookingRequest.getPatientId(),
-                        modifyBookingRequest.getServiceId(),
-                        modifyBookingRequest.getOldReservedDate(),
-                        modifyBookingRequest.getOldSlot(),
-                        modifyBookingRequest.getNewReservedDate(),
-                        modifyBookingRequest.getNewSlot()
-                ) == 1;
-    }
-
-    @Transactional
-    public boolean modifyTest(ModifyTestRequest modifyTestRequest) {
-        Optional<Booking> existingTest = bookingRepository
-                .checkTestExists(
-                        modifyTestRequest.getNewReservedDate(),
-                        modifyTestRequest.getServiceId()
-                );
-        if(existingTest.isPresent()) {
-            throw new IllegalStateException("Unable to modify test, test already exists!");
-        }
-
-        return bookingRepository
-                .updateTest(
-                        modifyTestRequest.getPatientId(),
-                        modifyTestRequest.getServiceId(),
-                        modifyTestRequest.getOldReservedDate(),
-                        modifyTestRequest.getNewReservedDate()
-                ) == 1;
-    }
 
     public UUID createStaffAccount(
             CreateHospitalAccountRequest request

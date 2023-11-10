@@ -1,7 +1,5 @@
 package org.teamseven.hms.backend.admin.annotation;
 
-import org.teamseven.hms.backend.booking.annotation.PatientDataRequestedMethod;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
