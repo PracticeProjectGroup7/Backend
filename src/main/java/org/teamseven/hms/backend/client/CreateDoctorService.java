@@ -1,4 +1,4 @@
-package org.teamseven.hms.backend.catalog.dto;
+package org.teamseven.hms.backend.client;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
