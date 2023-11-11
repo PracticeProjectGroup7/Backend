@@ -21,7 +21,7 @@ spring:
 
 client:
   catalog:
-    base-url: "http://CatalogueLoadBalancer-1297724942.ap-southeast-1.elb.amazonaws.com"
+    base-url: "http://18.141.195.235:8081"
     overview-path: "/api/v1/available-services/{service-id}"
     overview-by-doctor-id-path: "/api/v1/available-services/doctors/{doctor-id}"
     create-doctor-path: "/api/v1/available-services/doctors"
