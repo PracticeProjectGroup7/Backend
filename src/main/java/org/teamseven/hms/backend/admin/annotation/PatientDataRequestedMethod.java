@@ -1,4 +1,4 @@
-package org.teamseven.hms.backend.booking.annotation;
+package org.teamseven.hms.backend.admin.annotation;
 
 public enum PatientDataRequestedMethod {
 
