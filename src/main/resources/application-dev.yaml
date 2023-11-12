@@ -19,5 +19,13 @@ spring:
     password: healgroup7
     baselineOnMigrate: true
 
+client:
+  catalog:
+    base-url: "http://CatnewLB-1539553453.ap-southeast-1.elb.amazonaws.com:80"
+    overview-path: "/api/v1/available-services/{service-id}"
+    overview-by-doctor-id-path: "/api/v1/available-services/doctors/{doctor-id}"
+    create-doctor-path: "/api/v1/available-services/doctors"
+
+
 secEnvConf:
   enableLoginGuard: true
