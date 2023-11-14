@@ -2,6 +2,7 @@ package org.teamseven.hms.backend.auth;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,10 +13,8 @@ import org.teamseven.hms.backend.shared.exception.ResourceNotFoundException;
 import org.teamseven.hms.backend.shared.exception.UnauthorizedAccessException;
 import org.teamseven.hms.backend.user.Role;
 import org.teamseven.hms.backend.user.User;
-import org.teamseven.hms.backend.user.entity.DoctorRepository;
-import org.teamseven.hms.backend.user.entity.Patient;
+import org.teamseven.hms.backend.user.entity.*;
 import org.teamseven.hms.backend.user.UserRepository;
-import org.teamseven.hms.backend.user.entity.PatientRepository;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -31,6 +30,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
+    private final StaffRepository staffRepository;
 
     @Transactional
     public HashMap<String, Object> register(RegisterRequest request) {
@@ -52,26 +52,62 @@ public class AuthenticationService {
            throw new IllegalArgumentException("User already exists!");
         }
         var savedUser = userRepository.save(user);
-        var patient = Patient.builder()
-                .user(savedUser)
-                .bloodGroup(request.getBloodGroup())
-                .medicalCondition(request.getMedicalCondition())
-                .build();
-        var savedPatient = patientRepository.save(patient);
+
+        UUID roleId = null;
+        Role ROLE = null;
+        HashMap<String, Object> response = new HashMap<>();
+
+        switch (request.getRole()) {
+            case PATIENT:
+                var patient = Patient.builder()
+                    .user(savedUser)
+                    .bloodGroup(request.getBloodGroup())
+                    .medicalCondition(request.getMedicalCondition())
+                    .build();
+                var savedPatient = patientRepository.save(patient);
+                roleId = patient.getPatientId();
+                ROLE = Role.PATIENT;
+                response.put("patient", savedPatient);
+                break;
+            case DOCTOR:
+                var doctor = Doctor.builder()
+                        .user(savedUser)
+                        .speciality(request.getSpecialty())
+                        .consultationFees(request.getConsultationFees())
+                        .yearsOfExperience(request.getYearsOfExperience())
+                        .build();
+                var savedDoctor = doctorRepository.save(doctor);
+                roleId = doctor.getDoctorId();
+                ROLE = Role.DOCTOR;
+                response.put("doctor", savedDoctor);
+                break;
+            case STAFF:
+                var staff = Staff.builder()
+                        .user(savedUser)
+                        .type(request.getType())
+                        .isActive(1)
+                        .build();
+                var savedStaff = staffRepository.save(staff);
+                roleId = staff.getStaffId();
+                ROLE = Role.STAFF;
+                response.put("staff", savedStaff);
+                break;
+        }
+
         var jwtToken = jwtService.generateToken(
                 savedUser,
                 savedUser.getUserId(),
-                Role.PATIENT,
-                savedPatient.getPatientId(),
+                ROLE,
+                roleId,
                 savedUser.getName()
         );
-        HashMap<String, Object> response = new HashMap<>();
+
         response.put("token", AuthenticationResponse
                 .builder()
                 .token(jwtToken)
                 .build()
                 .getToken());
-        response.put("patient", savedPatient);
+
         return response;
     }
 

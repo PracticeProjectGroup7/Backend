@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.teamseven.hms.backend.user.Role;
 
 @Data
 @Builder
@@ -22,4 +23,8 @@ public class RegisterRequest {
     private String gender;
     private String bloodGroup;
     private String medicalCondition;
+    private String specialty;
+    private Role role;
+    private Double consultationFees;
+    private Integer yearsOfExperience;
 }
